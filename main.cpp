@@ -1,55 +1,140 @@
 #include <iostream>
-#include <system_error>
 #include "GameState.h"
+#include "artificalIntel.h"
 
 using namespace std;
 
+void printResult(GameState& state) {
+    std::cout << state;
+    if (state.hasWon(0)) {
+        std::cout << "Player X wins!\n";
+    } 
+    else if (state.hasWon(1)) {
+        std::cout << "Player O wins!\n";
+    } 
+    else {
+        std::cout << "It's a draw!\n";
+    }
+}
 
-Vec validMove(GameState game){
-    for (int i = 0; i < game.size; i++){
-        for (int j = 0; j < game.size; j++){
-            if (game.grid[i][j] == -1){
-                return Vec(i, j);
+int main() {
+    system("clear");
+
+    cout << "[h] for Human, [m] for AI" << endl;
+    cout << "Select player 1: ";
+    char player1;
+    char intelligence1;
+    cin >> player1;
+
+    if(player1 == 'm'){
+        cout << "[s] for Simple AI, [i] for Intelligent AI";
+        cin >> intelligence1;
+    }
+
+    cout << "[h] for Human, [m] for AI" << endl;
+    cout << "Select player 2: ";
+    char player2;
+    char intelligence2;
+    cin >> player2;
+
+    if(player2 == 'm'){
+        cout << "[s] for Simple AI, [i] for Intelligent AI";
+        cin >> intelligence2;
+    }
+
+    cout << "Select Board Size: ";
+    int size;
+    cin >> size;
+    
+    GameState game(size);
+
+    while (!game.done) {
+        int row, col;
+
+        cout << game;
+
+        if(player1 == 'h' && player2 == 'h'){
+            cout << (game.currentTurn ? "Player 1's turn: " : "Player 2's turn: ");
+            cin >> row >> col;
+
+            if (row < 0 || row >= game.size || col < 0 || col >= game.size) {
+                cout << "Invalid move. Try again.\n";
+                continue;
+            }
+
+            if (!game.play(row, col)) {
+                cout << "That cell is already occupied. Try again.\n";
+                continue;
+            }
+        }
+
+        if(player1 == 'h' && player2 == 'm'){
+            if(intelligence2 == 's'){
+                cout <<  "Player 1's turn: ";
+                cin >> row >> col;
+                if (row < 0 || row >= game.size || col < 0 || col >= game.size) {
+                    cout << "Invalid move. Try again.\n";
+                    continue;
+                }
+
+                if (!game.play(row, col)) {
+                    cout << "That cell is already occupied. Try again.\n";
+                    continue;
+                }
+                simpleAI(game, game.currentTurn);
+            }
+        }
+        if(player1 == 'm' && player2 == 'h'){
+            if(intelligence1 == 's'){
+                simpleAI(game, game.currentTurn);
+                cout <<  "Player 2's turn: ";
+                cin >> row >> col;
+                if (row < 0 || row >= game.size || col < 0 || col >= game.size) {
+                    cout << "Invalid move. Try again.\n";
+                    continue;
+                }
+
+                if (!game.play(row, col)) {
+                    cout << "That cell is already occupied. Try again.\n";
+                    continue;
+                }
+            }
+        }
+        if(player1 == 'h' && player2 == 'm'){
+            if(intelligence2 == 'i'){
+                cout <<  "Player 1's turn: ";
+                cin >> row >> col;
+                if (row < 0 || row >= game.size || col < 0 || col >= game.size) {
+                    cout << "Invalid move. Try again.\n";
+                    continue;
+                }
+
+                if (!game.play(row, col)) {
+                    cout << "That cell is already occupied. Try again.\n";
+                    continue;
+                }
+                sophisticatedAI(game, game.currentTurn);
+            }
+        }
+        if(player1 == 'm' && player2 == 'h'){
+            if(intelligence1 == 'i'){
+                sophisticatedAI(game, game.currentTurn);
+                cout <<  "Player 2's turn: ";
+                cin >> row >> col;
+                if (row < 0 || row >= game.size || col < 0 || col >= game.size) {
+                    cout << "Invalid move. Try again.\n";
+                    continue;
+                }
+
+                if (!game.play(row, col)) {
+                    cout << "That cell is already occupied. Try again.\n";
+                    continue;
+                }
             }
         }
     }
-    return Vec(0,0);
-}
 
-int main(){
-    GameState game;
+    printResult(game);
 
-    while(!game.done){
-        system("clear");
-        cout << game << endl;
-
-        int x, y;
-
-        if (game.currentTurn){
-            Vec move = validMove(game);
-            x = move.x;
-            y = move.y;
-        }
-        else{
-            cout << endl;
-            cout << "Enter move for (" << (!game.currentTurn ? "X" : "O") << "): ";
-            cin >> x >> y;
-        }
-
-        game.play(x, y);
-    }
-
-    system("clear");
-    cout << game << endl;
-    cout << endl;
-    if (game.hasWon(0)){
-        cout << "Player X has won" << endl;
-    }
-    else if (game.hasWon(1)){
-        cout << "Player O has won" << endl;
-    }
-    else {
-        cout << "It's a tie" << endl;
-    }
     return 0;
 }
