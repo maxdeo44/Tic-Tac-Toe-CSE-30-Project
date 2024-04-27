@@ -17,17 +17,6 @@ void printResult(GameState& state) {
     }
 }
 
-Vec validMove(GameState game){
-    for(int i = 0; i < game.size; i++){
-        for(int j = 0; j < game.size; j++){
-            if(game.grid[i][j] == -1){
-                return Vec(i,j);
-            }
-        }
-    }
-    return Vec(0,0);
-}
-
 int main() {
     system("clear");
 
@@ -135,7 +124,7 @@ int main() {
             if(intelligence2 == 'i'){
                 cout << game << endl;
                 if(game.currentTurn){
-                    Vec move = validMove(game);
+                    Vec move = findBestMove(game);
                     row = move.x;
                     col = move.y;
                 }
@@ -143,29 +132,41 @@ int main() {
                     cout << endl;
                     cout << (!game.currentTurn ? "Player 1's Turn" : "Player 2's Turn") << ": ";
                     cin >> row >> col;
+                    if (row < 0 || row >= game.size || col < 0 || col >= game.size) {
+                        cout << "Invalid move. Try again.\n";
+                        continue;
+                    }
+
+                    if (!game.play(row, col)) {
+                        cout << "That cell is already occupied. Try again.\n";
+                        continue;
+                    }
                 }
                 game.play(row, col);
-                if(!game.hasWon()){
-                    findBestMove(game);
-                }
             }
         }
         
         if(player1 == 'm' && player2 == 'h'){
             if(intelligence1 == 'i'){
-                if(!game.hasWon()){
-                    findBestMove(game);
-                }
                 cout << game << endl;
                 if(game.currentTurn){
-                    Vec move = validMove(game);
-                    row = move.x;
-                    col = move.y;
-                }
-                else{
                     cout << endl;
                     cout << (!game.currentTurn ? "Player 1's Turn" : "Player 2's Turn") << ": ";
                     cin >> row >> col;
+                    if (row < 0 || row >= game.size || col < 0 || col >= game.size) {
+                        cout << "Invalid move. Try again.\n";
+                        continue;
+                    }
+
+                    if (!game.play(row, col)) {
+                        cout << "That cell is already occupied. Try again.\n";
+                        continue;
+                    }
+                }
+                else{
+                    Vec move = findBestMove(game);
+                    row = move.x;
+                    col = move.y;
                 }
                 game.play(row, col);
             }
