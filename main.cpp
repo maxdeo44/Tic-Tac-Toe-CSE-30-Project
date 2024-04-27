@@ -124,7 +124,7 @@ int main() {
             if(intelligence2 == 'i'){
                 cout << game << endl;
                 if(game.currentTurn){
-                    Vec move = findBestMove(game);
+                    Vec move = findBestMove(game, game.currentTurn);
                     row = move.x;
                     col = move.y;
                 }
@@ -164,7 +164,7 @@ int main() {
                     }
                 }
                 else{
-                    Vec move = findBestMove(game);
+                    Vec move = findBestMove(game, game.currentTurn);
                     row = move.x;
                     col = move.y;
                 }
